@@ -140,8 +140,7 @@ namespace Logging
     { readBlockData(*m_input, buffer, size_); }
     void Input::readBlockData(std::istream& input, std::vector<uint8_t>& buffer, size_t size_)
     {
-        if (buffer.size() < size_)
-            buffer.resize(size_);
+        buffer.resize(size_);
 
         input.read(reinterpret_cast<char*>(&buffer[0]), size_);
         if (! input.good())
