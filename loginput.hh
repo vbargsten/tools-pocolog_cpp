@@ -219,8 +219,8 @@ namespace Logging
         T getData() const
         {
             T out;
-            getData(&out);
-           return out;
+            getData<T>(out);
+            return out;
         }
 
         template<typename T>
@@ -229,7 +229,6 @@ namespace Logging
             std::vector<uint8_t> buffer(m_buffer.begin() + SampleHeader::SIZE, m_buffer.end());
             Typelib::Value v(&out, *m_sample_type);
             Typelib::load(v, buffer);
-            return out;
         }
 
         DataInputIterator& operator += (size_t offset);

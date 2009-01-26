@@ -42,6 +42,8 @@ using namespace std;
 using namespace Typelib;
 using DFKI::Time;
 
+char const Logging::FORMAT_MAGIC[] = "POCOSIM";
+
 namespace
 {
     template<typename T>
