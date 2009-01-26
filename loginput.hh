@@ -226,7 +226,7 @@ namespace Logging
         template<typename T>
         void getData(T& out) const
         {
-            std::vector<uint8_t> buffer(m_buffer.begin() + sizeof(SampleHeader), m_buffer.end());
+            std::vector<uint8_t> buffer(m_buffer.begin() + SampleHeader::SIZE, m_buffer.end());
             Typelib::Value v(&out, *m_sample_type);
             Typelib::load(v, buffer);
             return out;

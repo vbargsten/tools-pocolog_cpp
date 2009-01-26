@@ -45,9 +45,9 @@ using DFKI::Time;
 namespace
 {
     template<typename T>
-    bool read(std::istream& input, T& data)
+    bool read(std::istream& input, T& data, size_t size = sizeof(T))
     {
-        input.read(reinterpret_cast<char*>(&data), sizeof(T));
+        input.read(reinterpret_cast<char*>(&data), size);
         return input.good();
     }
 
@@ -90,11 +90,11 @@ namespace Logging
         if (! input.good())
             throw Truncated();
 
-        // Check the magic
-        //char magic[4];
-        //input.read(magic, 4);
-        //if (! input || string(magic, 4) != "LAAS")
-        //    throw BadMagic();
+        // Load the prologue
+        Prologue prologue;
+        input.read(reinterpret_cast<char*>(&prologue), sizeof(prologue));
+        if (! input || string(prologue.magic, 7) != string(FORMAT_MAGIC))
+            throw BadMagic();
 
         BlockHeader       header;
         vector<uint8_t>   data;
@@ -282,7 +282,7 @@ namespace Logging
         size_t   pos = input.tellg();
 
         SampleHeader sample_header;
-        if (! read(input, sample_header))
+        if (! read(input, sample_header, SampleHeader::SIZE))
             throw Truncated();
 
         size_t size (sample_header.data_size);
@@ -290,7 +290,7 @@ namespace Logging
         if (! input)
             throw Truncated();
 
-        const Time timestamp(sample_header.rt_sec, sample_header.rt_usec);
+        const Time timestamp = sample_header.timestamp;
         if (m_begin.isNull())
         {
             // First block
@@ -345,10 +345,10 @@ namespace Logging
         m_pos = Input::npos; 
         m_input.clear();
     }
-    Time   DataInputIterator::getRealtime() const  { return Time(m_sample_header.rt_sec, m_sample_header.rt_usec); }
-    Time   DataInputIterator::getTimestamp() const { return Time(m_sample_header.lg_sec, m_sample_header.lg_usec); }
+    Time   DataInputIterator::getRealtime() const  { return m_sample_header.realtime; }
+    Time   DataInputIterator::getTimestamp() const { return m_sample_header.timestamp; }
     size_t DataInputIterator::getDataSize() const  { return m_sample_header.data_size; }
-    const uint8_t* DataInputIterator::getData() const  { return as<const uint8_t*>(&m_buffer[sizeof(SampleHeader)]); }
+    const uint8_t* DataInputIterator::getData() const  { return as<const uint8_t*>(&m_buffer[SampleHeader::SIZE]); }
 
     bool DataInputIterator::operator == (const DataInputIterator& with) const
     { 
