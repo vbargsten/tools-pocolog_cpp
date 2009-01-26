@@ -385,6 +385,7 @@ namespace Logging
                 break;
         }
 
+        m_block_header = header;
         m_pos = m_input.tellg();
         readCurBlock(header.data_size);
         return *this;
@@ -393,7 +394,6 @@ namespace Logging
     void DataInputIterator::readCurBlock(size_t data_size)
     {
         Input::readBlockData(m_input, m_buffer, data_size);
-
         if (! m_input)
         {
             failed();
