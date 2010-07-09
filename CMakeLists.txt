@@ -27,5 +27,12 @@ INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 ADD_EXECUTABLE(example_read examples/example_read.cc)
 TARGET_LINK_LIBRARIES(example_read pocosim_log)
 
+install(FILES logging.hh loginput.hh
+    DESTINATION include/pocosim_log)
+
 install(TARGETS pocosim_log
     LIBRARY DESTINATION lib)
+
+configure_file(pocosim_log.pc.in pocosim_log.pc @ONLY)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/pocosim_log.pc
+    DESTINATION lib/pkgconfig)
