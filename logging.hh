@@ -34,7 +34,7 @@
 #define SIM_BRIDGES_LOGGER_H
 
 #include <stdint.h>
-#include <dfki/base_types.h>
+#include <base/time.h>
 
 /** Log files are made of blocks. Each block begins with a common block header. 
  * Block are organized in streams, which all begin with a data stream declaration.
@@ -127,8 +127,8 @@ namespace Logging
 
     struct SampleHeader
     {
-        DFKI::Time realtime;
-        DFKI::Time timestamp;
+        base::Time realtime;
+        base::Time timestamp;
         uint32_t  data_size;
 	uint8_t   compressed;
 

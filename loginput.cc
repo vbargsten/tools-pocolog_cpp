@@ -40,7 +40,7 @@
 
 using namespace std;
 using namespace Typelib;
-using DFKI::Time;
+using base::Time;
 
 char const Logging::FORMAT_MAGIC[] = "POCOSIM";
 

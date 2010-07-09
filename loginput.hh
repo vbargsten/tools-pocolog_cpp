@@ -146,7 +146,7 @@ namespace Logging
         Typelib::Registry*   m_registry;
 
         BlockHeader m_firstheader;
-        DFKI::Time m_begin, m_end;
+        base::Time m_begin, m_end;
        
     protected:
         DataStream
@@ -164,8 +164,8 @@ namespace Logging
         DataInputIterator begin();
         DataInputIterator end();
 
-        DFKI::Time   getBeginTime() const;
-        DFKI::Time   getEndTime() const;
+        base::Time   getBeginTime() const;
+        base::Time   getEndTime() const;
 
         virtual BlockHeader newDataBlock(BlockHeader header);
     };
@@ -208,8 +208,8 @@ namespace Logging
     public:
         ~DataInputIterator();
 
-        DFKI::Time getRealtime() const;
-        DFKI::Time getTimestamp() const;
+        base::Time getRealtime() const;
+        base::Time getTimestamp() const;
 
         size_t getPos() const { return m_pos; }
         
