@@ -43,6 +43,7 @@ using namespace Typelib;
 using base::Time;
 
 char const Logging::FORMAT_MAGIC[] = "POCOSIM";
+const int Logging::SampleHeader::SIZE = 21;
 
 namespace
 {

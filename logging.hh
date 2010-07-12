@@ -132,7 +132,7 @@ namespace Logging
         uint32_t  data_size;
 	uint8_t   compressed;
 
-        static const int SIZE = 21;
+        static const int SIZE;
     };
 
     enum BlockType   
