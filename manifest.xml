@@ -1,0 +1,12 @@
+<package>
+    <author>Sylvain Joyeux/sylvain.joyeux@m4x.org</author>
+    <copyright>
+        DFKI/robotik@dfki.de
+        Sylvain Joyeux/sylvain.joyeux@m4x.org
+    </copyright>
+    <license>GPL v2 or later</license>
+
+    <depend package="typelib" />
+    <depend package="base" />
+</package>
+
