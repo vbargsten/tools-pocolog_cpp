@@ -137,6 +137,21 @@ namespace Logging
     Stream& Input::operator[] (size_t index) const
     { return *m_streams[index]; }
 
+    DataStream& Input::getDataStream( const std::string& name ) const
+    {
+	for(size_t i=0;i<m_streams.size();i++)
+	{
+	    if( m_streams[i]->getType() == DataStreamType )
+	    {
+		DataStream& stream = dynamic_cast<DataStream&>(*m_streams[i]);
+		if( stream.getName() == name )
+		    return stream;
+	    }
+	}
+
+	throw NoSuchStream(name);
+    }
+
     void Input::readBlockData(std::vector<uint8_t>& buffer, size_t size_)
     { readBlockData(*m_input, buffer, size_); }
     void Input::readBlockData(std::istream& input, std::vector<uint8_t>& buffer, size_t size_)
@@ -323,13 +338,14 @@ namespace Logging
 
 
 
-
+    DataInputIterator::DataInputIterator()
+    {}
 
     DataInputIterator::DataInputIterator
             ( Typelib::Type const* type
             , std::istream& input, size_t stream_idx
             , size_t first_block, const BlockHeader& first_header)
-        : m_sample_type(type), m_input(input), m_index(stream_idx)
+        : m_sample_type(type), m_input(&input), m_index(stream_idx)
         , m_pos(first_block), m_block_header(first_header)
     { 
         if (first_block != Input::npos)
@@ -345,7 +361,7 @@ namespace Logging
     void   DataInputIterator::failed()             
     { 
         m_pos = Input::npos; 
-        m_input.clear();
+        m_input->clear();
     }
     Time   DataInputIterator::getRealtime() const  { return m_sample_header.realtime; }
     Time   DataInputIterator::getTimestamp() const { return m_sample_header.timestamp; }
@@ -366,14 +382,14 @@ namespace Logging
         if (! offset)    return *this;
         if (! isValid()) return *this;
 
-        m_input.clear();
-        m_input.seekg(m_pos, ios_base::beg);
+        m_input->clear();
+        m_input->seekg(m_pos, ios_base::beg);
 
         BlockHeader header(m_block_header);
         while(true)
         {
-            header = Input::skip(m_input, header);
-            if (! m_input)
+            header = Input::skip(*m_input, header);
+            if (! *m_input)
             {
                 failed();
                 return *this;
@@ -386,14 +402,14 @@ namespace Logging
         }
 
         m_block_header = header;
-        m_pos = m_input.tellg();
+        m_pos = m_input->tellg();
         readCurBlock(header.data_size);
         return *this;
     }
 
     void DataInputIterator::readCurBlock(size_t data_size)
     {
-        Input::readBlockData(m_input, m_buffer, data_size);
+        Input::readBlockData(*m_input, m_buffer, data_size);
         if (! m_input)
         {
             failed();
@@ -417,6 +433,8 @@ namespace Logging
     { display << "file truncated "; }
     void BadMagic::output(std::ostream& display) throw()
     { display << "bad magic code "; }
+    void NoSuchStream::output(std::ostream& display) throw()
+    { display << "stream '" << name << "' not found "; }
     void BadStream::output(std::ostream& display) throw()
     { display << "stream index " << m_index << " unknown ";
         FileException::output(display); }

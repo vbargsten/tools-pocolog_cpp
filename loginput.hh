@@ -79,6 +79,9 @@ namespace Logging
         size_t      size() const;
         Stream& operator [] (size_t index) const;
 
+	/// returns the data stream with the given name or NULL if there is no such stream
+	DataStream& getDataStream( const std::string& name ) const;
+
         /// Helper functions for input iterators
         static void readBlockData(std::istream& stream, std::vector<uint8_t>& buffer, size_t size);
         static BlockHeader skip(std::istream& stream, const BlockHeader& header);
@@ -188,7 +191,7 @@ namespace Logging
         friend class DataStream;
 
         Typelib::Type const* m_sample_type;
-        std::istream&        m_input;
+        std::istream*        m_input;
         size_t               m_index;
         size_t               m_pos;
 
@@ -201,15 +204,17 @@ namespace Logging
             ( Typelib::Type const* sample_type
             , std::istream& input, size_t stream_index
             , size_t first_block, const BlockHeader& first_header);
-        bool isValid() const;
         void failed();
         void readCurBlock(size_t size);
 
     public:
+	DataInputIterator();
         ~DataInputIterator();
 
         base::Time getRealtime() const;
         base::Time getTimestamp() const;
+
+        bool isValid() const;
 
         size_t getPos() const { return m_pos; }
         
@@ -239,7 +244,6 @@ namespace Logging
         bool operator != (const DataInputIterator& with) const
         { return ! ((*this) == with); }
     };
-
 
 
 
@@ -308,6 +312,14 @@ namespace Logging
             : FileException(pos) {}
 
         virtual void output(std::ostream& display) throw();
+    };
+    struct NoSuchStream : public FileException
+    { 
+	const std::string name;
+
+	NoSuchStream(const std::string& name) : name(name) {};
+        ~NoSuchStream() throw() {}
+	virtual void output(std::ostream& display) throw(); 
     };
 }
 
