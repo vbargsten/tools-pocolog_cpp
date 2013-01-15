@@ -30,7 +30,7 @@
  */
 
 
-#include "pocolog_cpp/Pocolog.hpp"
+#include "pocolog_cpp/Read.hpp"
 
 #include <typelib/pluginmanager.hh>
 #include <typelib/registry.hh>
@@ -41,9 +41,6 @@
 using namespace std;
 using namespace Typelib;
 using base::Time;
-
-char const Pocolog::FORMAT_MAGIC[] = "POCOSIM";
-const int Pocolog::SampleHeader::SIZE = 21;
 
 namespace
 {
@@ -76,7 +73,7 @@ namespace
     };
 }
 
-namespace Pocolog
+namespace pocolog_cpp
 {
     Input::Input() 
         : m_input(0) {}
@@ -299,7 +296,7 @@ namespace Pocolog
         size_t   pos = input.tellg();
 
         SampleHeader sample_header;
-        if (! read(input, sample_header, SampleHeader::SIZE))
+        if (! read(input, sample_header, SAMPLE_HEADER_SIZE))
             throw Truncated();
 
         size_t size (sample_header.data_size);
@@ -366,7 +363,7 @@ namespace Pocolog
     Time   DataInputIterator::getRealtime() const  { return m_sample_header.realtime; }
     Time   DataInputIterator::getTimestamp() const { return m_sample_header.timestamp; }
     size_t DataInputIterator::getDataSize() const  { return m_sample_header.data_size; }
-    const uint8_t* DataInputIterator::getData() const  { return as<const uint8_t*>(&m_buffer[SampleHeader::SIZE]); }
+    const uint8_t* DataInputIterator::getData() const  { return as<const uint8_t*>(&m_buffer[SAMPLE_HEADER_SIZE]); }
 
     bool DataInputIterator::operator == (const DataInputIterator& with) const
     { 

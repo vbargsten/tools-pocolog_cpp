@@ -30,8 +30,8 @@
  */
 
 
-#ifndef LOGINPUT_H
-#define LOGINPUT_H
+#ifndef POCOLOG_CPP_READ_HPP
+#define POCOLOG_CPP_READ_HPP
 
 #include "pocolog_cpp/Format.hpp"
 
@@ -48,7 +48,7 @@ namespace Typelib
     class Type;
 }
 
-namespace Pocolog
+namespace pocolog_cpp
 {
     class Stream;
     class DataStream;
@@ -231,7 +231,7 @@ namespace Pocolog
         template<typename T>
         void getData(T& out) const
         {
-            std::vector<uint8_t> buffer(m_buffer.begin() + SampleHeader::SIZE, m_buffer.end());
+            std::vector<uint8_t> buffer(m_buffer.begin() + SAMPLE_HEADER_SIZE, m_buffer.end());
             Typelib::Value v(&out, *m_sample_type);
             Typelib::load(v, buffer);
         }

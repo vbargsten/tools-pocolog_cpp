@@ -1,4 +1,5 @@
 /* 
+ * Copyright (c) 2008-2013 DFKI
  * Copyright (c) 2005-2006 LAAS/CNRS <openrobots@laas.fr>
  *	Sylvain Joyeux <sylvain.joyeux@m4x.org>
  *
@@ -30,8 +31,8 @@
  */
 
 
-#ifndef SIM_BRIDGES_LOGGER_H
-#define SIM_BRIDGES_LOGGER_H
+#ifndef POCOLOG_CPP_FORMAT_H
+#define POCOLOG_CPP_FORMAT_H
 
 #include <stdint.h>
 #include <base/time.h>
@@ -95,7 +96,7 @@
  * </table>
  */
 
-namespace Pocolog
+namespace pocolog_cpp
 {
     // Version 1 is the same format without a prologue, and without the compression
     // flag in data blocks
@@ -124,6 +125,7 @@ namespace Pocolog
         uint16_t stream_idx;
         uint32_t data_size;
     };
+    static const int BLOCK_HEADER_SIZE = 8;
 
     struct SampleHeader
     {
@@ -131,9 +133,8 @@ namespace Pocolog
         base::Time timestamp;
         uint32_t  data_size;
 	uint8_t   compressed;
-
-        static const int SIZE;
     };
+    static const int SAMPLE_HEADER_SIZE = 21;
 
     enum BlockType   
     { 
@@ -154,6 +155,13 @@ namespace Pocolog
 	SetTimeOffset = 1
     };
 
+    /** Structure passed to createLoggingPort to add metadata to streams
+     */
+    struct StreamMetadata
+    {
+        std::string key;
+        std::string value;
+    };
 };
 
 #endif
