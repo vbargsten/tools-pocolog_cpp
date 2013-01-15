@@ -1,38 +1,6 @@
-PROJECT(pocosim_log_cpp)
-
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
-INCLUDE(FindPkgConfig)
-
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
-MACRO(CMAKE_USE_FULL_RPATH install_rpath)
-    SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
-    SET(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE) 
-    SET(CMAKE_INSTALL_RPATH ${install_rpath})
-    SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-ENDMACRO(CMAKE_USE_FULL_RPATH)
-CMAKE_USE_FULL_RPATH("${CMAKE_INSTALL_PREFIX}/lib")
-
-pkg_check_modules(BASE_TYPES REQUIRED "base-types")
-INCLUDE_DIRECTORIES(${BASE_TYPES_INCLUDE_DIRS})
-LINK_DIRECTORIES(${BASE_TYPES_LIBRARY_DIRS})
-
-pkg_check_modules(TYPELIB REQUIRED "typelib")
-INCLUDE_DIRECTORIES(${TYPELIB_INCLUDE_DIRS})
-LINK_DIRECTORIES(${TYPELIB_LIBRARY_DIRS})
-
-ADD_LIBRARY(pocosim_log SHARED loginput.cc)
-TARGET_LINK_LIBRARIES(pocosim_log ${BASE_TYPES_LIBRARIES} ${TYPELIB_LIBRARIES})
-
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
-ADD_EXECUTABLE(example_read examples/example_read.cc)
-TARGET_LINK_LIBRARIES(example_read pocosim_log)
-
-install(FILES logging.hh loginput.hh
-    DESTINATION include/pocosim_log)
-
-install(TARGETS pocosim_log
-    LIBRARY DESTINATION lib)
-
-configure_file(pocosim_log.pc.in pocosim_log.pc @ONLY)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/pocosim_log.pc
-    DESTINATION lib/pkgconfig)
+# CMakeLists.txt has to be located in the project folder and cmake has to be
+# executed from 'project/build' with 'cmake ../'.
+cmake_minimum_required(VERSION 2.6)
+find_package(Rock)
+rock_init(pocolog_cpp 0.1)
+rock_standard_layout()

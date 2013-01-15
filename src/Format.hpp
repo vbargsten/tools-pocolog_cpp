@@ -95,7 +95,7 @@
  * </table>
  */
 
-namespace Logging
+namespace Pocolog
 {
     // Version 1 is the same format without a prologue, and without the compression
     // flag in data blocks

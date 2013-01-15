@@ -33,7 +33,7 @@
 #ifndef LOGINPUT_H
 #define LOGINPUT_H
 
-#include "logging.hh"
+#include "pocolog_cpp/Format.hpp"
 
 #include <string>
 #include <vector>
@@ -48,7 +48,7 @@ namespace Typelib
     class Type;
 }
 
-namespace Logging
+namespace Pocolog
 {
     class Stream;
     class DataStream;

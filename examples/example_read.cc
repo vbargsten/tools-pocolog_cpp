@@ -1,16 +1,16 @@
 #include <iostream>
 #include <fstream>
-#include "loginput.hh"
+#include "pocolog_cpp/Pocolog.hpp"
 #include "laser_readings.h"
 
 using namespace std;
-using namespace Logging;
+using namespace Pocolog;
 
 int main(int argc, char** argv)
 {
     ifstream logfile(argv[1]);
 
-    Logging::Input input;
+    Pocolog::Input input;
     input.init(logfile);
 
     cerr << argv[1] << " has " << input.size() << " streams" << endl;

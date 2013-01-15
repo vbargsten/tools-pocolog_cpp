@@ -30,7 +30,7 @@
  */
 
 
-#include "loginput.hh"
+#include "pocolog_cpp/Pocolog.hpp"
 
 #include <typelib/pluginmanager.hh>
 #include <typelib/registry.hh>
@@ -42,8 +42,8 @@ using namespace std;
 using namespace Typelib;
 using base::Time;
 
-char const Logging::FORMAT_MAGIC[] = "POCOSIM";
-const int Logging::SampleHeader::SIZE = 21;
+char const Pocolog::FORMAT_MAGIC[] = "POCOSIM";
+const int Pocolog::SampleHeader::SIZE = 21;
 
 namespace
 {
@@ -76,7 +76,7 @@ namespace
     };
 }
 
-namespace Logging
+namespace Pocolog
 {
     Input::Input() 
         : m_input(0) {}
