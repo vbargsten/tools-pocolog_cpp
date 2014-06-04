@@ -41,7 +41,7 @@
 
 using namespace std;
 using boost::mutex;
-namespace endian = utilmm::endian;
+namespace endian = Typelib::Endian;
 
 void pocolog_cpp::writePrologue(std::ostream& stream)
 {
