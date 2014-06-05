@@ -37,7 +37,8 @@
 #include <stdint.h>
 #include <base/time.h>
 
-/** Log files are made of blocks. Each block begins with a common block header. 
+/**
+ * Log files are made of blocks. Each block begins with a common block header. 
  * Block are organized in streams, which all begin with a data stream declaration.
  * Data blocks begin  with a data stream declaration block, which includes the
  * stream name, the stream type name and (optionally) a type registry which defines
@@ -116,7 +117,7 @@ namespace pocolog_cpp
 	    for (int i = 0; i < 7; ++i)
 		magic[i] = FORMAT_MAGIC[i];
 	}
-    };
+    } __attribute__ ((packed)) ;
 
     struct BlockHeader
     {   
@@ -124,16 +125,24 @@ namespace pocolog_cpp
         uint8_t  padding;
         uint16_t stream_idx;
         uint32_t data_size;
-    };
+    } __attribute__ ((packed));
     static const int BLOCK_HEADER_SIZE = 8;
 
+    struct SampleHeaderData
+    {
+        int64_t realtime;
+        int64_t timestamp;
+        uint32_t  data_size;
+        uint8_t   compressed;
+    } __attribute__ ((packed));
+    
     struct SampleHeader
     {
         base::Time realtime;
         base::Time timestamp;
         uint32_t  data_size;
 	uint8_t   compressed;
-    };
+    } ; //__attribute__ ((packed));
     static const int SAMPLE_HEADER_SIZE = 21;
 
     enum BlockType   
