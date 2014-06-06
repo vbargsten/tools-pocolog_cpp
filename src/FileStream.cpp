@@ -7,14 +7,17 @@
 #include <stdexcept>
 #include <unistd.h>
 
-pocolog_cpp::FileStream::FileStream()
+pocolog_cpp::FileStream::FileStream() : fd(-1)
 {
 
 }
 
 pocolog_cpp::FileStream::FileStream(const char* __s, std::ios_base::openmode mode)
 {
-    open(__s, mode);
+    if(!open(__s, mode))
+    {
+        throw std::runtime_error(std::string("Error opening file") + __s);
+    }
 }
 
 bool pocolog_cpp::FileStream::open(const char* fileName, std::ios_base::openmode mode)
@@ -171,7 +174,8 @@ bool pocolog_cpp::FileStream::eof() const
 void pocolog_cpp::FileStream::close()
 {
     goodFlag = false;
-    ::close(fd);
+    if(fd > 0)
+        ::close(fd);
     fd = -1;
 }
 
