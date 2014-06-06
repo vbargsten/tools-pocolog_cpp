@@ -8,9 +8,6 @@
 namespace pocolog_cpp
 {
     
-
-    
-    
 Index::Index(std::string indexFileName, size_t streamIdx): curSampleNr(-1)
 {
     indexFile.open(indexFileName.c_str(), std::ifstream::binary | std::ifstream::in);
@@ -18,6 +15,9 @@ Index::Index(std::string indexFileName, size_t streamIdx): curSampleNr(-1)
     indexFile.seekg(streamIdx * sizeof(IndexPrologue) + sizeof(IndexFile::IndexFileHeader));
     
     indexFile.read((char *) & prologue, sizeof(IndexPrologue));
+    
+    firstSampleTime = base::Time::fromMicroseconds(prologue.firstSampleTime);
+    lastSampleTime = base::Time::fromMicroseconds(prologue.lastSampleTime);
 }
 
 Index::Index(const pocolog_cpp::StreamDescription& desc) : firstAdd(true), curSampleNr(-1)
@@ -59,14 +59,34 @@ off_t Index::getPrologueSize()
 off_t Index::writeIndexToFile(std::fstream& indexFile, off_t prologPos, off_t indexDataPos)
 {
     indexFile.seekp(prologPos, std::fstream::beg);
+    if(!indexFile.good())
+        throw std::runtime_error("Error writing index file");
     
     prologue.dataPos = indexDataPos;
-    std::cout << "Found " << prologue.numSamples << " in stream " << name<< std::endl; 
+    
+    if(prologue.numSamples)
+    {
+        prologue.firstSampleTime = buildBuffer[0].sampleTime;
+        prologue.lastSampleTime = buildBuffer[prologue.numSamples -1].sampleTime;
+    }
+    
+//     std::cout << "Found " << prologue.numSamples << " in stream " << name<< std::endl; 
     
     indexFile.write((char *) &prologue, sizeof(IndexPrologue));
+    if(!indexFile.good())
+        throw std::runtime_error("Error writing index file");
     
     indexFile.seekp(indexDataPos, std::fstream::beg);
+    if(!indexFile.good())
+        throw std::runtime_error("Error writing index file");
+
+//     std::cout << "Wrinting " << buildBuffer.size() * sizeof(IndexInfo) / 1024 << " KBytes to index File " << std::endl;
+    
     indexFile.write((char *) buildBuffer.data(), buildBuffer.size() * sizeof(IndexInfo));
+    if(!indexFile.good())
+        throw std::runtime_error("Error writing index file");
+    
+//     std::cout << "Done new pos " << indexFile.tellp() << std::endl; 
     
     return indexFile.tellp();
 }
