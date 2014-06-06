@@ -70,6 +70,11 @@ public:
         return prologue.numSamples;
     }
     
+    std::string getName()
+    {
+        return name;
+    }
+    
     ~Index();
 private:
     std::string name;
