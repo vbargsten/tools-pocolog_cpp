@@ -45,7 +45,7 @@ LogFile::LogFile(const std::string& fileName) : filename(fileName)
     
     gotBlockHeader = false;
 
-    std::cout << "Loaded " << descriptions.size() << " stream descriptions " << std::endl;
+    std::cout << "Found " << descriptions.size() << " stream in logfile " << getFileName() << std::endl;
     
     //load Index
     IndexFile indexFile(*this);
@@ -56,7 +56,7 @@ LogFile::LogFile(const std::string& fileName) : filename(fileName)
         switch(it->getType())
         {
             case DataStreamType:
-                std::cout << "Creating InputDataStream " << it->getName() << std::endl;
+//                 std::cout << "Creating InputDataStream " << it->getName() << std::endl;
                 streams.push_back(new InputDataStream(*it, indexFile.getIndexForStream(*it)));
                 
                 break;
@@ -79,7 +79,6 @@ Stream& LogFile::getStream(const std::string streamName) const
 {
     for(std::vector<Stream *>::const_iterator it = streams.begin(); it != streams.end(); it++)
     {
-        std::cout << "Stream " << (*it)->getName() << std::endl;
         if(streamName == (*it)->getName())
             return **it;
     }

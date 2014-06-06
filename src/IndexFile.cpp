@@ -42,7 +42,7 @@ IndexFile::IndexFile(LogFile &logFile)
 
 bool IndexFile::loadIndexFile(std::string indexFileName)
 {
-    std::cout << "Loading Index File " << std::endl;
+//     std::cout << "Loading Index File " << std::endl;
     std::ifstream indexFile(indexFileName.c_str(), std::fstream::in | std::fstream::binary );
     
     if(!indexFile.good())
@@ -87,20 +87,18 @@ Index& IndexFile::getIndexForStream(const StreamDescription& desc)
 
 bool IndexFile::createIndexFile(std::string indexFileName, LogFile& logFile)
 {
-    std::cout << "Creating Index File " << std::endl;
-    std::fstream indexFile(indexFileName.c_str(), std::fstream::out | std::fstream::binary | std::fstream::trunc);
-
+    std::cout << "Creating Index File for logfile " << logFile.getFileName() << std::endl;
     std::vector<char> writeBuffer;
     writeBuffer.resize(8096 * 1024);
+    std::fstream indexFile;
     indexFile.rdbuf()->pubsetbuf(writeBuffer.data(), writeBuffer.size());
 
-
-     
+    indexFile.open(indexFileName.c_str(), std::fstream::out | std::fstream::binary | std::fstream::trunc);
     
     const std::vector< StreamDescription > streams(logFile.getStreamDescriptions());
     indices.resize(streams.size());
     
-    std::cout << "Found " << streams.size() << " datastreams " << std::endl;
+//     std::cout << "Found " << streams.size() << " datastreams " << std::endl;
     
     for(std::vector< StreamDescription >::const_iterator it = streams.begin(); it != streams.end(); it++)
     {
@@ -137,15 +135,20 @@ bool IndexFile::createIndexFile(std::string indexFileName, LogFile& logFile)
     off_t curDataPos = indices.size() * Index::getPrologueSize() + sizeof(IndexFileHeader);
     for(std::vector<Index* >::iterator it = indices.begin(); it != indices.end(); it++)
     {
+//         std::cout << "Writing index for stream " << (*it)->getName() << " , num samples " << (*it)->getNumSamples() << std::endl;
+    
         //Write index prologue
         curDataPos = (*it)->writeIndexToFile(indexFile, curProloguePos, curDataPos);
         curProloguePos += Index::getPrologueSize();
+        
+        if(!indexFile.good())
+            throw std::runtime_error("Error writing index File");
         
         delete *it;
     }
     
     indexFile.close();
-    std::cout << "done " << std::endl;
+//     std::cout << "done " << std::endl;
     
     indices.clear();;
     
