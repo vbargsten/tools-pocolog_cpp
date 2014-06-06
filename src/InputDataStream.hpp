@@ -36,7 +36,8 @@ public:
         if(!getSampleData(buffer, sampleNr))
             return false;
         
-        Typelib::Value v(&out, sizeof(T), *m_type);
+//         Typelib::Value v(&out, sizeof(T), *m_type);
+        Typelib::Value v(&out, *m_type);
         Typelib::load(v, buffer);
         return true;
     }

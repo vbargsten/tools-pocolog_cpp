@@ -7,19 +7,26 @@ rock_library(pocolog_cpp
         InputDataStream.cpp
 #         OutputDataStream.cpp
         StreamDescription.cpp 
-        Stream.cpp LogFile.cpp IndexFile.cpp FileStream.cpp
+        Stream.cpp 
+        LogFile.cpp 
+        IndexFile.cpp 
+        FileStream.cpp 
+        MultiFileIndex.cpp
     HEADERS 
         Format.hpp 
         Read.hpp 
         Write.hpp 
         Index.hpp 
-        DataStream.hpp
     DEPS_PKGCONFIG base-types typelib)
 
 rock_executable(indexer
     SOURCES indexer.cpp
     DEPS pocolog_cpp
     DEPS_PKGCONFIG base-types typelib
+)
+
+rock_executable(speedTest
+    SOURCES speedTest.cpp
 )
 
 rock_executable(example_old

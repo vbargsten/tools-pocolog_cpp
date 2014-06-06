@@ -5,7 +5,7 @@
 #include <assert.h>
 #include <iostream>
 #include <stdexcept>
-
+#include <unistd.h>
 
 pocolog_cpp::FileStream::FileStream()
 {
