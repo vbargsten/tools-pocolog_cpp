@@ -71,8 +71,11 @@ off_t Index::writeIndexToFile(std::fstream& indexFile, off_t prologPos, off_t in
     return indexFile.tellp();
 }
 
-std::streampos Index::getSamplePos(size_t sampleNr)
+void Index::loadIndex(size_t sampleNr)
 {
+    if(sampleNr >= prologue.numSamples)
+        throw std::runtime_error("Error sample out of index requested");
+        
     if(sampleNr != curSampleNr)
     {
         std::streampos pos(prologue.dataPos + sampleNr * sizeof(IndexInfo));
@@ -86,11 +89,24 @@ std::streampos Index::getSamplePos(size_t sampleNr)
         
         curSampleNr = sampleNr;
     }
+}
+
+
+std::streampos Index::getSamplePos(size_t sampleNr)
+{
+
+    loadIndex(sampleNr);
     
     return std::streampos(curIndexInfo.samplePosInLogFile);
     
 }
 
+base::Time Index::getSampleTime(size_t sampleNr)
+{
+    loadIndex(sampleNr);
+
+    return base::Time::fromMicroseconds(curIndexInfo.sampleTime);
+}
 
 Index::~Index()
 {

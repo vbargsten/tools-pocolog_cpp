@@ -54,6 +54,11 @@ public:
         return desc.getIndex(); 
     }
     
+    Index& getFileIndex() const       
+    { 
+        return index; 
+    }
+    
     size_t getSize() const
     {
         return index.getNumSamples();

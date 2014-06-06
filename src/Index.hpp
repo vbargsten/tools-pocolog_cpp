@@ -27,6 +27,9 @@ class Index
         int64_t lastSampleTime;
         int64_t dataPos;  
     } __attribute__ ((packed));
+    
+    void loadIndex(size_t sampleNr);
+    
 public:
     Index(std::string indexFileName, size_t streamIdx);
 
@@ -50,6 +53,7 @@ public:
     void addSample(off_t filePosition, const base::Time &sampleTime);
     
     std::streampos getSamplePos(size_t sampleNr);
+    base::Time getSampleTime(size_t sampleNr);
     
     const base::Time &getFirstSampleTime() const
     {

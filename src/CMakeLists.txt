@@ -25,6 +25,11 @@ rock_executable(indexer
     DEPS_PKGCONFIG base-types typelib
 )
 
+rock_executable(multiIndexer
+    SOURCES multiIndexTest.cpp
+    DEPS pocolog_cpp
+    DEPS_PKGCONFIG base-types typelib
+)
 rock_executable(speedTest
     SOURCES speedTest.cpp
 )
