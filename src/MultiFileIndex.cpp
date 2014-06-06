@@ -14,61 +14,40 @@ MultiFileIndex::MultiFileIndex(const std::vector< std::string >& fileNames)
     
 }
    
-struct IndexEntry
-{
-    IndexEntry() : logFileIdx(0), streamIdxInLogFile(0), sampleNrInStream(0), sampleTime(0) {};
-    uint16_t logFileIdx;
-    uint16_t streamIdxInLogFile;
-    uint64_t sampleNrInStream;
-    uint64_t sampleTime;
-};
 
-struct BuildEntry {
-    Stream *stream;
-    IndexEntry entry;
-};
-   
+
+
 bool MultiFileIndex::createIndex(const std::vector< std::string >& fileNames)
 {
-    std::vector<LogFile *> logFiles;
-    
-    std::vector<Index *> indices;
-    std::vector<Stream *> streams;
-
     //order all streams by time
-    std::multimap<base::Time, BuildEntry> streamMap;
+    std::multimap<base::Time, IndexEntry> streamMap;
 
-    int64_t combinedSize = 0;
-    
-    uint16_t logFileIdx = 0;
-    uint16_t streamIdxInLogFile = 0;
+    globalSampleCount = 0;
     
     for(std::vector< std::string>::const_iterator it = fileNames.begin(); it != fileNames.end(); it++ )
     {
+        std::cout << "Loading logfile " << *it << std::endl;
         LogFile *curLogfile = new LogFile(*it);
-        
-        streamIdxInLogFile = 0;
         
         for(std::vector<Stream *>::const_iterator it = curLogfile->getStreams().begin(); it != curLogfile->getStreams().end(); it++)
         {
-            indices.push_back(&((*it)->getFileIndex()));
-            streams.push_back(*it);
-            
-            combinedSize += (*it)->getSize();
-            
-            BuildEntry entry;
-            entry.stream = *it;
-            entry.entry.logFileIdx = logFileIdx;
-            entry.entry.streamIdxInLogFile = streamIdxInLogFile;
-            
-            streamMap.insert(std::make_pair((*it)->getFistSampleTime(), entry));
-            streamIdxInLogFile++;
+            if((*it)->getSize())
+            {
+                globalSampleCount += (*it)->getSize();
+                
+                IndexEntry entry;
+                entry.stream = *it;
+                
+                streamMap.insert(std::make_pair((*it)->getFistSampleTime(), entry));
+            }
         }
         
         logFiles.push_back(curLogfile);
-        logFileIdx++; 
+        std::cout << "Loading logfile Done " << *it << std::endl;
     }
 
+    index.resize(globalSampleCount);
+    
     int64_t globalSampleNr = 0;
     
     int lastPercentage = 0;
@@ -77,32 +56,36 @@ bool MultiFileIndex::createIndex(const std::vector< std::string >& fileNames)
     
     while(!streamMap.empty())
     {
-        BuildEntry curEntry = streamMap.begin()->second;
+        //remove stream from map
+        IndexEntry curEntry = streamMap.begin()->second;
         streamMap.erase(streamMap.begin());
-        
+
+        base::Time sampleTime = curEntry.stream->getFileIndex().getSampleTime(curEntry.sampleNrInStream);
+
+        //add index sample
+        index[globalSampleNr] = curEntry;
+
+        curEntry.sampleNrInStream++;
+
         //check if we reached the end of the stream
-        if(curEntry.entry.sampleNrInStream + 1 < curEntry.stream->getSize())
+        if(curEntry.sampleNrInStream < curEntry.stream->getSize())
         {
-            curEntry.entry.sampleNrInStream++;
-            
-            globalSampleNr++;
-            int curPercentag = (globalSampleNr * 100 / combinedSize);
-            if(lastPercentage != curPercentag)
-            {
-                lastPercentage = curPercentag;
-                std::cout << "\r" << lastPercentage << "% Done" << std::flush;
-            }
-            
-            //TODO write to index
-            
             //reenter stream
-            streamMap.insert(std::make_pair(curEntry.stream->getFileIndex().getSampleTime(curEntry.entry.sampleNrInStream), curEntry));
+            streamMap.insert(std::make_pair(sampleTime, curEntry));
         }        
+
+        globalSampleNr++;
+        int curPercentag = (globalSampleNr * 100 / globalSampleCount);
+        if(lastPercentage != curPercentag)
+        {
+            lastPercentage = curPercentag;
+            std::cout << "\r" << lastPercentage << "% Done" << std::flush;
+        }
     }
     std::cout << "\r 100% Done";
     std::cout << std::endl;
 
-    std::cout << "Processed " << globalSampleNr << " samples " << std::endl;
+    std::cout << "Processed " << globalSampleNr << " of " << globalSampleCount << " samples " << std::endl;
     
     
     
