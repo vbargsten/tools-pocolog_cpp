@@ -130,8 +130,10 @@ namespace pocolog_cpp
 
     struct SampleHeaderData
     {
-        int64_t realtime;
-        int64_t timestamp;
+        uint32_t realtime_tv_sec;
+        uint32_t realtime_tv_usec;
+        uint32_t timestamp_tv_sec;
+        uint32_t timestamp_tv_usec;
         uint32_t  data_size;
         uint8_t   compressed;
     } __attribute__ ((packed));

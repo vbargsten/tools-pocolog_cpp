@@ -182,7 +182,7 @@ const base::Time LogFile::getSampleTime() const
     {
         throw std::runtime_error("Internal Error: Called getSampleTime without reading Sample header first");
     }
-    return base::Time::fromMicroseconds(curSampleHeader.realtime);
+    return base::Time::fromSeconds(curSampleHeader.realtime_tv_sec, curSampleHeader.realtime_tv_usec);
 }
 
 
