@@ -4,6 +4,7 @@
 #include "LogFile.hpp"
 #include <string.h>
 #include <iostream>
+#include <cassert>
 
 namespace pocolog_cpp
 {

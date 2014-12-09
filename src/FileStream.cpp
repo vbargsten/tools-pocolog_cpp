@@ -2,7 +2,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#include <assert.h>
+#include <cassert>
 #include <iostream>
 #include <stdexcept>
 #include <unistd.h>
