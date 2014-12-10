@@ -5,7 +5,6 @@ rock_library(pocolog_cpp
         Write.cpp 
         Index.cpp 
         InputDataStream.cpp
-#         OutputDataStream.cpp
         StreamDescription.cpp 
         Stream.cpp 
         LogFile.cpp 
