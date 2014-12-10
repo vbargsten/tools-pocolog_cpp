@@ -28,7 +28,7 @@ int main(int argc, char **argv)
         
         std::cout << "Stream size is " << dataStream->getSize() << std::endl;
         
-        for(int i = 0; i < dataStream->getSize(); i++)
+        for(size_t i = 0; i < dataStream->getSize(); i++)
         {
             base::samples::Joints joints;
             if(!dataStream->getSample<base::samples::Joints>(joints, i))
