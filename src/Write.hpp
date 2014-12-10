@@ -70,12 +70,12 @@ namespace pocolog_cpp
 
         int newStreamIndex();
 
-        void writeStreamDeclaration(int stream_index, StreamType type,
+        void writeStreamDeclaration(uint16_t stream_index, StreamType type,
                 std::string const& name, std::string const& type_name,
                 std::string const& type_def,
                 std::vector<StreamMetadata> const& metadata);
-        void writeSampleHeader(int stream_index, base::Time const& realtime, base::Time const& logical, size_t size);
-        void writeSample(int stream_index, base::Time const& realtime, base::Time const& logical, void* payload_data, size_t payload_size);
+        void writeSampleHeader(uint16_t stream_index, base::Time const& realtime, base::Time const& logical, uint32_t payload_size);
+        void writeSample(uint16_t stream_index, base::Time const& realtime, base::Time const& logical, void* payload_data, uint32_t payload_size);
     };
 
     namespace details
@@ -207,7 +207,7 @@ namespace pocolog_cpp
          */
         void setSampling(base::Time const& period);
 
-        bool writeSampleHeader(const base::Time& timestamp, size_t size);
+        bool writeSampleHeader(const base::Time& timestamp, uint32_t payload_size);
 
         std::ostream& getStream();
     };

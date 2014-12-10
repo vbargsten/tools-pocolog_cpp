@@ -67,7 +67,7 @@ namespace pocolog_cpp
     int Output::newStreamIndex()
     { return m_stream_idx++; }
 
-    void Output::writeStreamDeclaration(int stream_index, StreamType type,
+    void Output::writeStreamDeclaration(uint16_t stream_index, StreamType type,
             std::string const& name, std::string const& type_name,
             std::string const& type_def,
             std::vector<StreamMetadata> const& metadata)
@@ -81,7 +81,7 @@ namespace pocolog_cpp
             metadata_yaml = yaml_io.str();
         }
 
-        long payload_size = 1 + 4 + name.size() + 4 + type_name.size()
+        uint32_t payload_size = 1 + 4 + name.size() + 4 + type_name.size()
             + 4 + type_def.size()
             + 4 + metadata_yaml.size();
 
@@ -98,7 +98,7 @@ namespace pocolog_cpp
         }
     }
 
-    void Output::writeSampleHeader(int stream_index, base::Time const& realtime, base::Time const& logical, size_t payload_size)
+    void Output::writeSampleHeader(uint16_t stream_index, base::Time const& realtime, base::Time const& logical, uint32_t payload_size)
     {
         BlockHeader block_header = { DataBlockType, 0xFF, stream_index, SAMPLE_HEADER_SIZE + payload_size };
         *this << block_header;
@@ -107,7 +107,7 @@ namespace pocolog_cpp
         *this << sample_header;
     }
 
-    void Output::writeSample(int stream_index, base::Time const& realtime, base::Time const& logical, void* payload_data, size_t payload_size)
+    void Output::writeSample(uint16_t stream_index, base::Time const& realtime, base::Time const& logical, void* payload_data, uint32_t payload_size)
     {
         writeSampleHeader(stream_index, realtime, logical, payload_size);
         m_stream.write(reinterpret_cast<const char*>(payload_data), payload_size);
@@ -162,15 +162,15 @@ namespace pocolog_cpp
     std::ostream& StreamWriter::getStream()
     { return m_file.getStream(); }
 
-    bool StreamWriter::writeSampleHeader(const base::Time& timestamp, size_t size)
+    bool StreamWriter::writeSampleHeader(const base::Time& timestamp, uint32_t payload_size)
     {
         if (!m_last.isNull() && !m_sampling.isNull() && (timestamp - m_last) < m_sampling)
             return false;
 
-        if (size == 0)
-            size = m_type_size;
+        if (payload_size == 0)
+            payload_size = m_type_size;
 
-        m_file.writeSampleHeader(m_stream_idx, base::Time::now(), timestamp, size);
+        m_file.writeSampleHeader(m_stream_idx, base::Time::now(), timestamp, payload_size);
         m_last = timestamp;
         return true;
     }
