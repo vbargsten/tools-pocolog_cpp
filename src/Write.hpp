@@ -49,7 +49,6 @@ namespace pocolog_cpp
     class Output
     {
         template<class T> friend Output& operator << (Output& output, const T& value);
-        static const size_t nstream = static_cast<size_t>(-1);
 
         std::ostream& m_stream;
         uint16_t m_stream_idx;
