@@ -65,7 +65,7 @@ StreamDescription::StreamDescription(const std::string &fileName, pocolog_cpp::F
             curPos = fileStream.tellg();
             if(curPos - startPos != (int)blockSize)
             {
-                std::streampos diff = curPos - startPos;
+//                 std::streampos diff = curPos - startPos;
 //                 std::cout << "Start of Stream Declaration " << startPos << " diff " << diff << " expected size " << blockSize << std::endl;
 
 //                 uint32_t stringSize = blockSize - diff;
