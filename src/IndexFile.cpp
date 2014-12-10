@@ -4,6 +4,7 @@
 #include "LogFile.hpp"
 #include <string.h>
 #include <iostream>
+#include <cassert>
 
 namespace pocolog_cpp
 {
@@ -64,7 +65,7 @@ bool IndexFile::loadIndexFile(std::string indexFileName)
     
     indexFile.close();
     
-    for(int i = 0; i < header.numStreams; i++)
+    for(uint32_t i = 0; i < header.numStreams; i++)
     {
         //load streams
         indices.push_back(new Index(indexFileName, i));

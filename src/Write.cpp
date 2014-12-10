@@ -32,8 +32,6 @@
 
 #include "pocolog_cpp/Write.hpp"
 #include <sstream>
-#include <cassert>
-#include <boost/static_assert.hpp>
 #include <string.h>
 
 #include <typelib/registry.hh>
