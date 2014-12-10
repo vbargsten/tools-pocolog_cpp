@@ -64,7 +64,7 @@ namespace pocolog_cpp
         writePrologue(stream);
     }
 
-    int Output::newStreamIndex()
+    uint16_t Output::newStreamIndex()
     { return m_stream_idx++; }
 
     void Output::writeStreamDeclaration(uint16_t stream_index, StreamType type,
