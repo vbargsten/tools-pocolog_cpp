@@ -35,7 +35,7 @@
 #define POCOLOG_CPP_FORMAT_H
 
 #include <stdint.h>
-#include <base/time.h>
+#include <base/Time.hpp>
 
 /**
  * Log files are made of blocks. Each block begins with a common block header. 

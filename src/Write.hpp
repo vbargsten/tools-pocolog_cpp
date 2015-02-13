@@ -49,10 +49,9 @@ namespace pocolog_cpp
     class Output
     {
         template<class T> friend Output& operator << (Output& output, const T& value);
-        static const size_t nstream = static_cast<size_t>(-1);
 
         std::ostream& m_stream;
-        int m_stream_idx;
+        uint16_t m_stream_idx;
 
     private:
         template<class T>
@@ -68,14 +67,14 @@ namespace pocolog_cpp
 
         std::ostream& getStream();
 
-        int newStreamIndex();
+        uint16_t newStreamIndex();
 
-        void writeStreamDeclaration(int stream_index, StreamType type,
+        void writeStreamDeclaration(uint16_t stream_index, StreamType type,
                 std::string const& name, std::string const& type_name,
                 std::string const& type_def,
                 std::vector<StreamMetadata> const& metadata);
-        void writeSampleHeader(int stream_index, base::Time const& realtime, base::Time const& logical, size_t size);
-        void writeSample(int stream_index, base::Time const& realtime, base::Time const& logical, void* payload_data, size_t payload_size);
+        void writeSampleHeader(uint16_t stream_index, base::Time const& realtime, base::Time const& logical, uint32_t payload_size);
+        void writeSample(uint16_t stream_index, base::Time const& realtime, base::Time const& logical, void* payload_data, uint32_t payload_size);
     };
 
     namespace details
@@ -167,8 +166,9 @@ namespace pocolog_cpp
         std::string const m_type_name;
         std::string const m_type_def;
         std::vector<StreamMetadata> m_metadata;
-        int const m_stream_idx;
-        size_t const m_type_size;
+        // same types as in "struct BlockHeader"
+        uint16_t const m_stream_idx;
+        uint32_t const m_type_size;
         base::Time m_sampling;
         base::Time m_last;
 
@@ -207,7 +207,7 @@ namespace pocolog_cpp
          */
         void setSampling(base::Time const& period);
 
-        bool writeSampleHeader(const base::Time& timestamp, size_t size);
+        bool writeSampleHeader(const base::Time& timestamp, uint32_t payload_size);
 
         std::ostream& getStream();
     };

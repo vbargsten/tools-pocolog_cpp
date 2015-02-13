@@ -52,20 +52,20 @@ StreamDescription::StreamDescription(const std::string &fileName, pocolog_cpp::F
             
             std::streampos curPos = fileStream.tellg();
             
-            if(curPos - startPos < blockSize)
+            if(curPos - startPos < (int)blockSize)
             {
                 m_typeDescription = readString(fileStream);
 //                 std::cout << "Found stream description : " << m_typeDescription << std::endl;
             }
-            if(curPos - startPos < blockSize)
+            if(curPos - startPos < (int)blockSize)
             {
                 m_metadata = readString(fileStream);
             }
             
             curPos = fileStream.tellg();
-            if(curPos - startPos != blockSize)
+            if(curPos - startPos != (int)blockSize)
             {
-                std::streampos diff = curPos - startPos;
+//                 std::streampos diff = curPos - startPos;
 //                 std::cout << "Start of Stream Declaration " << startPos << " diff " << diff << " expected size " << blockSize << std::endl;
 
 //                 uint32_t stringSize = blockSize - diff;

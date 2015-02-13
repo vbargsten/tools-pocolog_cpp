@@ -21,7 +21,7 @@ int main(int argc, char **argv)
 
         
         
-        for(int i = 0 ; i < bufferSize; i++)
+        for(size_t i = 0 ; i < bufferSize; i++)
         {
             char t = 'a';
             file1.write(&t, sizeof(char));
@@ -39,13 +39,13 @@ int main(int argc, char **argv)
             return 0;
         }
         
-        for(int i = 0 ; i < bufferSize; i++)
+        for(size_t i = 0 ; i < bufferSize; i++)
         {
             char t = 'a';
             readBuffer[i] = t;
         }
         
-        int written = 0;
+        size_t written = 0;
         
         std::cout << "Fd is " << fd <<std::endl;
         

@@ -29,16 +29,16 @@ bool MultiFileIndex::createIndex(const std::vector< std::string >& fileNames)
         std::cout << "Loading logfile " << *it << std::endl;
         LogFile *curLogfile = new LogFile(*it);
         
-        for(std::vector<Stream *>::const_iterator it = curLogfile->getStreams().begin(); it != curLogfile->getStreams().end(); it++)
+        for(std::vector<Stream *>::const_iterator jt = curLogfile->getStreams().begin(); jt != curLogfile->getStreams().end(); jt++)
         {
-            if((*it)->getSize())
+            if((*jt)->getSize())
             {
-                globalSampleCount += (*it)->getSize();
+                globalSampleCount += (*jt)->getSize();
                 
                 IndexEntry entry;
-                entry.stream = *it;
+                entry.stream = *jt;
                 
-                streamMap.insert(std::make_pair((*it)->getFistSampleTime(), entry));
+                streamMap.insert(std::make_pair((*jt)->getFistSampleTime(), entry));
             }
         }
         
