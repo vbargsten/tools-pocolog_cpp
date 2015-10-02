@@ -22,7 +22,7 @@ pocolog_cpp::FileStream::FileStream(const char* __s, std::ios_base::openmode mod
 
 bool pocolog_cpp::FileStream::open(const char* fileName, std::ios_base::openmode mode)
 {
-    fd = ::open(fileName, O_NOATIME | O_NONBLOCK);
+    fd = ::open(fileName, O_NONBLOCK);
     if(fd < 0)
     {
         goodFlag = false;
