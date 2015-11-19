@@ -82,6 +82,12 @@ bool IndexFile::loadIndexFile(std::string indexFileName, pocolog_cpp::LogFile& l
         
         streams.push_back(newStream);
         
+        
+        std::cout << "Stream " << newStream.getName() << " [" << newStream.getTypeName() << "]" <<std::endl;
+        std::cout << "  " << idx->getNumSamples() << " Samples from " << idx->getFirstSampleTime().toString(base::Time::Seconds) 
+                    << " to " << idx->getLastSampleTime().toString(base::Time::Seconds) << " [" 
+                    << (idx->getLastSampleTime() - idx->getFirstSampleTime()).toString(base::Time::Milliseconds , "%H:%M:%S") << "]" <<std::endl;
+        
     }
     
     return true;
