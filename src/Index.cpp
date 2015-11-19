@@ -20,11 +20,12 @@ Index::Index(std::string indexFileName, size_t streamIdx): curSampleNr(-1)
     lastSampleTime = base::Time::fromMicroseconds(prologue.lastSampleTime);
 }
 
-Index::Index(const pocolog_cpp::StreamDescription& desc) : firstAdd(true), curSampleNr(-1)
+Index::Index(const pocolog_cpp::StreamDescription& desc, off_t posOfStreamDesc) : firstAdd(true), curSampleNr(-1)
 {
     prologue.streamIdx = desc.getIndex();
     prologue.nameCrc = 0;
     prologue.numSamples = 0;
+    prologue.streamDescPos = posOfStreamDesc;
     name = desc.getName();
 }
 

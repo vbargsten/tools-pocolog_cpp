@@ -25,7 +25,8 @@ class Index
         int32_t nameCrc;
         int64_t firstSampleTime;
         int64_t lastSampleTime;
-        int64_t dataPos;  
+        int64_t dataPos;
+        int64_t streamDescPos;
     } __attribute__ ((packed));
     
     void loadIndex(size_t sampleNr);
@@ -33,7 +34,7 @@ class Index
 public:
     Index(std::string indexFileName, size_t streamIdx);
 
-    Index(const StreamDescription &desc);
+    Index(const StreamDescription &desc, off_t posOfStreamDesc);
     
     bool matches(const StreamDescription &desc) const;
     
@@ -69,6 +70,11 @@ public:
     {
         return prologue.numSamples;
     }
+    
+    std::streampos getDescriptionPos() const
+    {
+        return prologue.streamDescPos;
+    };
     
     std::string getName()
     {

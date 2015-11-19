@@ -24,11 +24,11 @@ public:
         static std::string getMagic();
     } __attribute__((packed));
     
-    IndexFile(std::string indexFileName);
+    IndexFile(std::string indexFileName, pocolog_cpp::LogFile& logFile);
     
     IndexFile(LogFile& logFile);
     
-    bool loadIndexFile(std::string indexFileName);
+    bool loadIndexFile(std::string indexFileName, LogFile& logFile);
     bool createIndexFile(std::string indexFileName, LogFile& logFile);
     
     Index &getIndexForStream(const StreamDescription &desc);

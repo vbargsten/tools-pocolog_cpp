@@ -35,6 +35,8 @@ public:
     const std::vector<Stream *> &getStreams() const;
     const std::vector<StreamDescription> &getStreamDescriptions() const; 
 
+    bool loadStreamDescription(StreamDescription &result, std::streampos descPos);
+    
     const BlockHeader &getCurBlockHeader() const;
     
     bool readNextBlockHeader(struct BlockHeader &curBlockHeade);
@@ -46,6 +48,8 @@ public:
     
     
     std::streampos getSamplePos() const;
+    std::streampos getBlockDataPos() const;
+    std::streampos getBlockHeaderPos() const;
     const base::Time getSampleTime() const;
     size_t getSampleStreamIdx() const;
     

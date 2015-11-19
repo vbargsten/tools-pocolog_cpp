@@ -21,9 +21,9 @@ std::string IndexFile::IndexFileHeader::getMagic()
 }
 
     
-IndexFile::IndexFile(std::string indexFileName)
+IndexFile::IndexFile(std::string indexFileName, LogFile &logFile)
 {
-    if(!loadIndexFile(indexFileName))
+    if(!loadIndexFile(indexFileName, logFile))
         throw std::runtime_error("Error, index is corrupted");
     
 }
@@ -31,18 +31,18 @@ IndexFile::IndexFile(std::string indexFileName)
 IndexFile::IndexFile(LogFile &logFile)
 {
     std::string indexFileName(logFile.getFileBaseName() + ".id2");
-    if(!loadIndexFile(indexFileName))
+    if(!loadIndexFile(indexFileName, logFile))
     {
         if(!createIndexFile(indexFileName, logFile))
         {
             throw std::runtime_error("Error building Index");
         }
-        if(!loadIndexFile(indexFileName))
+        if(!loadIndexFile(indexFileName, logFile))
             throw std::runtime_error("Internal Error, created index is corrupted");
     }
 }
 
-bool IndexFile::loadIndexFile(std::string indexFileName)
+bool IndexFile::loadIndexFile(std::string indexFileName, pocolog_cpp::LogFile& logFile)
 {
 //     std::cout << "Loading Index File " << std::endl;
     std::ifstream indexFile(indexFileName.c_str(), std::fstream::in | std::fstream::binary );
@@ -68,8 +68,20 @@ bool IndexFile::loadIndexFile(std::string indexFileName)
     
     for(uint32_t i = 0; i < header.numStreams; i++)
     {
+        Index *idx = new Index(indexFileName, i);
         //load streams
-        indices.push_back(new Index(indexFileName, i));
+        indices.push_back(idx);
+        
+
+        
+        StreamDescription newStream;
+        if(!logFile.loadStreamDescription(newStream, idx->getDescriptionPos()))
+        {
+            throw std::runtime_error("IndexFile: Internal error, could not load stream description");
+        }
+        
+        streams.push_back(newStream);
+        
     }
     
     return true;
@@ -109,28 +121,16 @@ bool IndexFile::createIndexFile(std::string indexFileName, LogFile& logFile)
                 break;
             case StreamBlockType:
             {
-//                 std::cout << "Found Stream header " << std::endl;
-                std::vector<uint8_t> descriptionData;
-                if(!logFile.readCurBlock(descriptionData))
+                off_t descPos = logFile.getBlockHeaderPos();
+                StreamDescription newStream;
+                if(!logFile.loadStreamDescription(newStream, descPos))
                 {
-                    if(logFile.eof())
-                    {
-                        std::cout << "IndexFile: Warning, log file seems to be truncated" << std::endl;
-                        break;
-                    }
-                    throw std::runtime_error("IndexFile: Error building index, log file seems corrupted");
+                    break;
                 }
-                
-                if(streams.size() != curBlockHeader.stream_idx)
-                {
-                    throw std::runtime_error("IndexFile: Error, stream index mismatch");
-                }
-                
-                StreamDescription newStream(logFile.getFileName(), descriptionData, curBlockHeader.stream_idx);
                 
                 streams.push_back(newStream);
                 
-                Index *newIndex = new Index(newStream);
+                Index *newIndex = new Index(newStream, descPos);
                 size_t index = newStream.getIndex();
                 if(index != indices.size() )
                 {
