@@ -55,7 +55,7 @@ public:
     bool good() const;
     bool eof() const;
     bool fail() const;
-    
+    off_t size() const;
     void close();
     
 };

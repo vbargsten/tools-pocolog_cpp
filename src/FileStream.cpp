@@ -175,6 +175,11 @@ bool pocolog_cpp::FileStream::eof() const
     return readPos >= fileSize;
 }
 
+off_t pocolog_cpp::FileStream::size() const
+{
+    return fileSize;
+}
+
 void pocolog_cpp::FileStream::close()
 {
     goodFlag = false;
