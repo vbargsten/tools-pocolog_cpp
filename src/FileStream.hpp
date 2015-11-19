@@ -26,7 +26,6 @@ private:
     int fd;
     off_t readBufferPosition;
     off_t readBufferEndPosition;
-    size_t bufferSize;
     off_t readPos;
     off_t writePos;
     off_t fileSize;
