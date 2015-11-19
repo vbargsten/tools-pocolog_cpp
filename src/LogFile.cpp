@@ -24,32 +24,21 @@ LogFile::LogFile(const std::string& fileName) : filename(fileName)
     if (! logFile.good() || std::string(prologue.magic, 7) != std::string(FORMAT_MAGIC))
         throw std::runtime_error("Error, Bad Magic Block, not a Pocolog file ?");;
 
-    nextBlockHeaderPos = logFile.tellg();
-    std::streampos lastBlockHeaderPos = nextBlockHeaderPos;
-    do 
-    {
-        lastBlockHeaderPos = nextBlockHeaderPos;
-        if(!readNextBlockHeader())
-        {
-            throw std::runtime_error("Error, could not read block header");
-        }
-        if(curBlockHeader.type != StreamBlockType)
-        {
-            break;
-        }
-
-        descriptions.push_back(StreamDescription(fileName, logFile, curBlockHeader.stream_idx, curBlockHeader.data_size));
-    } while (curBlockHeader.type == StreamBlockType);
-    
-    nextBlockHeaderPos = lastBlockHeaderPos;
-    
+    firstBlockHeaderPos = logFile.tellg();
+    nextBlockHeaderPos = firstBlockHeaderPos;
     gotBlockHeader = false;
 
-    std::cout << "Found " << descriptions.size() << " stream in logfile " << getFileName() << std::endl;
+//     std::cout << "Found " << descriptions.size() << " stream in logfile " << getFileName() << std::endl;
     
     //load Index
     IndexFile indexFile(*this);
+
+    //we need to start from the start, as Stream declarations may be any where
+    //inside the logfile
+    nextBlockHeaderPos = firstBlockHeaderPos;
+    gotBlockHeader = false;
     
+    descriptions = indexFile.getStreamDescriptions();
     
     for(std::vector<StreamDescription>::const_iterator it = descriptions.begin(); it != descriptions.end();it++)
     {
@@ -65,9 +54,6 @@ LogFile::LogFile(const std::string& fileName) : filename(fileName)
                 break;
         }
     }
-
-    
-    
 }
 
 const std::vector< Stream* >& LogFile::getStreams() const
@@ -104,8 +90,15 @@ std::string LogFile::getFileBaseName() const
     return baseName;
 }
 
-bool LogFile::readNextBlockHeader()
+bool LogFile::readNextBlockHeader(BlockHeader& curBlockHeade)
 {
+    bool ret = readNextBlockHeader();
+    curBlockHeade = curBlockHeader;
+    return ret;
+}
+
+bool LogFile::readNextBlockHeader()
+{   
     logFile.seekg(nextBlockHeaderPos);
     if(logFile.eof())
         return false;
@@ -125,8 +118,22 @@ bool LogFile::readNextBlockHeader()
     curSampleHeaderPos += sizeof(BlockHeader);
     
     gotBlockHeader = true;
+    gotSampleHeader = false;
     
     return true;
+}
+
+const BlockHeader& LogFile::getCurBlockHeader() const
+{
+    return curBlockHeader;
+}
+
+bool LogFile::readCurBlock(std::vector< uint8_t >& blockData)
+{
+    blockData.resize(curBlockHeader.data_size);
+    logFile.seekg(curSampleHeaderPos);
+    logFile.read(reinterpret_cast<char *>(blockData.data()), curBlockHeader.data_size);
+    return logFile.good();
 }
 
 bool LogFile::readSampleHeader()
@@ -140,19 +147,26 @@ bool LogFile::readSampleHeader()
     
     if(logFile.eof() || logFile.fail())
     {
-        std::cout << "Sample Pos is " << curSampleHeaderPos << " block header pos " << curBlockHeaderPos << std::endl;
-        throw std::runtime_error("Error, log file corrupted, could not read Sample Header");
+        return false;
+//         std::cout << "Sample Pos is " << curSampleHeaderPos << " block header pos " << curBlockHeaderPos << std::endl;
+//         throw std::runtime_error("LogFile: Error, log file corrupted, could not read Sample Header");
     }
     
     logFile.read((char *) &curSampleHeader, sizeof(SampleHeaderData));
     if(!logFile.good())
     {
-        throw std::runtime_error("Error, log file corrupted, could not read Sample Header");
+        return false;
+//         throw std::runtime_error("LogFile: Error, log file corrupted, could not read Sample Header");
     }
     
     gotSampleHeader = true;
 
     return true;  
+}
+
+bool LogFile::checkSampleComplete()
+{
+    return (logFile.size() >= nextBlockHeaderPos);
 }
 
 std::streampos LogFile::getSamplePos() const
@@ -184,6 +198,10 @@ const base::Time LogFile::getSampleTime() const
     return base::Time::fromSeconds(curSampleHeader.realtime_tv_sec, curSampleHeader.realtime_tv_usec);
 }
 
+bool LogFile::eof() const
+{
+    return logFile.eof();
+}
 
 
     

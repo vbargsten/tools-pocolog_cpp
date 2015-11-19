@@ -4,6 +4,7 @@
 #include <string>
 #include "Format.hpp"
 #include "FileStream.hpp"
+#include <vector>
 
 namespace pocolog_cpp
 {
@@ -19,9 +20,9 @@ class StreamDescription
     std::string m_metadata;
 
     
-    std::string readString(FileStream &fileStream);
+    std::string readString(const std::vector< uint8_t > data, size_t& pos);
 public:
-    StreamDescription(const std::string& fileName, pocolog_cpp::FileStream& fileStream, size_t stream_idx, size_t blockSize);
+    StreamDescription(const std::string& fileName, std::vector<uint8_t> data, size_t stream_idx);
     StreamDescription();
     ~StreamDescription();
     

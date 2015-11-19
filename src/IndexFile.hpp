@@ -12,6 +12,7 @@ class LogFile;
 class IndexFile
 {
     std::vector<Index *> indices;
+    std::vector<StreamDescription> streams;
 
 public:
     
@@ -32,6 +33,7 @@ public:
     
     Index &getIndexForStream(const StreamDescription &desc);
     
+    const std::vector< StreamDescription >& getStreamDescriptions() const;
 };
 }
 #endif // INDEXFILE_H
