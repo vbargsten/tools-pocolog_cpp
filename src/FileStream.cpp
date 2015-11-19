@@ -151,12 +151,14 @@ bool pocolog_cpp::FileStream::fail() const
 std::streampos pocolog_cpp::FileStream::seekg(std::streampos pos)
 {
     readPos = pos;
+    goodFlag = true;
     return readPos;
 }
 
 std::streampos pocolog_cpp::FileStream::seekp(std::streampos pos)
 {
     writePos = pos;
+    goodFlag = true;
     return writePos;
 }
 
