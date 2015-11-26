@@ -3,7 +3,7 @@
 #include "IndexFile.hpp"
 #include <map>
 #include <iostream>
-
+#include "InputDataStream.hpp"
 
 namespace pocolog_cpp
 {
@@ -11,39 +11,40 @@ namespace pocolog_cpp
 MultiFileIndex::MultiFileIndex(const std::vector< std::string >& fileNames)
 {
     createIndex(fileNames);
-    
 }
-   
 
-
-
-bool MultiFileIndex::createIndex(const std::vector< std::string >& fileNames)
+bool MultiFileIndex::createIndex(const std::vector< LogFile* >& logfiles)
 {
     //order all streams by time
     std::multimap<base::Time, IndexEntry> streamMap;
 
     globalSampleCount = 0;
     
-    for(std::vector< std::string>::const_iterator it = fileNames.begin(); it != fileNames.end(); it++ )
+    size_t globalStreamIdx = 0;
+    
+    for(LogFile *curLogfile : logfiles)
     {
-        std::cout << "Loading logfile " << *it << std::endl;
-        LogFile *curLogfile = new LogFile(*it);
-        
-        for(std::vector<Stream *>::const_iterator jt = curLogfile->getStreams().begin(); jt != curLogfile->getStreams().end(); jt++)
+        for(Stream *stream : curLogfile->getStreams())
         {
-            if((*jt)->getSize())
+            globalSampleCount += stream->getSize();
+            
+            IndexEntry entry;
+            entry.stream = stream;
+            entry.globalStreamIdx = globalStreamIdx;
+            
+            streamToGlobalIdx.insert(std::make_pair(stream, globalStreamIdx));
+            
+            globalStreamIdx++;
+            streamMap.insert(std::make_pair(stream->getFistSampleTime(), entry));
+
+            InputDataStream *dataStream = dynamic_cast<InputDataStream *>(entry.stream);
+            if(dataStream)
             {
-                globalSampleCount += (*jt)->getSize();
-                
-                IndexEntry entry;
-                entry.stream = *jt;
-                
-                streamMap.insert(std::make_pair((*jt)->getFistSampleTime(), entry));
+                combinedRegistry.merge(dataStream->getStreamRegistry());
             }
+            streams.push_back(stream);
         }
-        
-        logFiles.push_back(curLogfile);
-        std::cout << "Loading logfile Done " << *it << std::endl;
+        std::cout << "Loading logfile Done " << curLogfile->getFileName() << std::endl;
     }
 
     index.resize(globalSampleCount);
@@ -59,6 +60,10 @@ bool MultiFileIndex::createIndex(const std::vector< std::string >& fileNames)
         //remove stream from map
         IndexEntry curEntry = streamMap.begin()->second;
         streamMap.erase(streamMap.begin());
+        
+        //ignore empty stream here, no data to play back
+        if(!curEntry.stream->getSize())
+            continue;
 
         base::Time sampleTime = curEntry.stream->getFileIndex().getSampleTime(curEntry.sampleNrInStream);
 
@@ -90,6 +95,30 @@ bool MultiFileIndex::createIndex(const std::vector< std::string >& fileNames)
     
     
     return true;
+
+}
+
+size_t MultiFileIndex::getGlobalStreamIdx(Stream* stream) const
+{
+    auto it = streamToGlobalIdx.find(stream);
+    if(it != streamToGlobalIdx.end())
+        return it->second;
+    
+    throw std::runtime_error("Error, got unknown stream");
+}
+
+
+bool MultiFileIndex::createIndex(const std::vector< std::string >& fileNames)
+{
+    for(std::vector< std::string>::const_iterator it = fileNames.begin(); it != fileNames.end(); it++ )
+    {
+        std::cout << "Loading logfile " << *it << std::endl;
+        LogFile *curLogfile = new LogFile(*it);
+        logFiles.push_back(curLogfile);
+        std::cout << "Loading logfile Done " << *it << std::endl;
+    }
+
+    return createIndex(logFiles);
 }
 
    
