@@ -44,5 +44,22 @@ const Typelib::Type* InputDataStream::getType() const
     return m_type; 
 }
 
+Typelib::Value InputDataStream::getTyplibValue(void *memoryOfType, size_t memorySize, size_t sampleNr)
+{
+    std::vector<uint8_t> buffer;
+    if(!getSampleData(buffer, sampleNr))
+        throw std::runtime_error("Error, sample for stream " + desc.getName() + " could not be loaded");
+
+    if(memorySize < m_type->getSize())
+    {
+        throw std::runtime_error("Error, given memory area is to small for type " + m_type->getName() + " at stream " + desc.getName());
+    }
+
+    Typelib::Value v(memoryOfType, *m_type);
+    //init memory area
+    Typelib::init(v);
+    Typelib::load(v, buffer);
+    return v;
+}
 
 }

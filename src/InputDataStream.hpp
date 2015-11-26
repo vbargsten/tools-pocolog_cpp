@@ -28,6 +28,16 @@ public:
     virtual ~InputDataStream();
 
     Typelib::Type const* getType() const;
+     
+    size_t getTypeMemorySize() const
+    {
+        return m_type->getSize();
+    }
+    
+    Typelib::Registry &getStreamRegistry()
+    {
+        return *m_registry;
+    }
     
     template<typename T>
     bool getSample(T& out, size_t sampleNr)
@@ -41,6 +51,8 @@ public:
         Typelib::load(v, buffer);
         return true;
     }
+    
+    Typelib::Value getTyplibValue(void *memoryOfType, size_t memorySize, size_t sampleNr);
 };
 
 }
