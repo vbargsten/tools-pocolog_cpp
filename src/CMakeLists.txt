@@ -1,3 +1,4 @@
+find_package( Boost COMPONENTS system filesystem)
 rock_library(pocolog_cpp 
     SOURCES 
         Format.cpp 
@@ -12,11 +13,21 @@ rock_library(pocolog_cpp
         FileStream.cpp 
         MultiFileIndex.cpp
     HEADERS 
+        FileStream.hpp 
         Format.hpp 
-        Read.hpp 
-        Write.hpp 
         Index.hpp 
-    DEPS_PKGCONFIG base-types typelib)
+        InputDataStream.hpp
+        LogFile.hpp 
+        MultiFileIndex.hpp
+        Read.hpp 
+        Stream.hpp
+        StreamDescription.hpp 
+        Write.hpp 
+    DEPS_PKGCONFIG 
+        base-types 
+        typelib
+    DEPS_PLAIN 
+        Boost_SYSTEM Boost_FILESYSTEM)
 
 rock_executable(indexer
     SOURCES indexer.cpp
