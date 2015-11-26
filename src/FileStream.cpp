@@ -52,11 +52,6 @@ bool pocolog_cpp::FileStream::open(const char* fileName, std::ios_base::openmode
     return true;
 }
 
-bool pocolog_cpp::FileStream::posInBuffer(off_t pos)
-{
-    return pos >= readBufferPosition && pos < readBufferEndPosition;
-}
-
 bool pocolog_cpp::FileStream::reloadBuffer(off_t position)
 {
 //     std::cout << "Loading Buffer " << position << std::endl;
@@ -75,6 +70,7 @@ bool pocolog_cpp::FileStream::reloadBuffer(off_t position)
     off_t bytesToBlockEnd = (blockNr + 1) * blockSize - position;
     
 //     std::cout << "Reading " << bytesToBlockEnd << " bytes " << std::endl;
+    
     readBufferPosition = position;
     readBufferEndPosition = position + bytesToBlockEnd;
     
@@ -170,11 +166,6 @@ std::streampos pocolog_cpp::FileStream::tellg()
 std::streampos pocolog_cpp::FileStream::tellp()
 {
     return writePos;
-}
-
-bool pocolog_cpp::FileStream::eof() const
-{
-    return readPos >= fileSize;
 }
 
 off_t pocolog_cpp::FileStream::size() const

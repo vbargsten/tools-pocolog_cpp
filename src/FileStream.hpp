@@ -31,7 +31,10 @@ private:
     off_t fileSize;
     off_t blockSize;
     
-    bool posInBuffer(off_t pos);
+    bool posInBuffer(off_t pos) const
+    {
+        return pos >= readBufferPosition && pos < readBufferEndPosition;
+    }
     
     bool reloadBuffer(off_t position);
     bool goodFlag;
@@ -53,7 +56,11 @@ public:
     std::streampos seekp(std::streampos pos);
     
     bool good() const;
-    bool eof() const;
+    bool eof() const
+    {
+        return readPos >= fileSize;
+    }
+
     bool fail() const;
     off_t size() const;
     void close();
