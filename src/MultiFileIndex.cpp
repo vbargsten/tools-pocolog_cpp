@@ -100,7 +100,7 @@ bool MultiFileIndex::createIndex(const std::vector< LogFile* >& logfiles)
 
 size_t MultiFileIndex::getGlobalStreamIdx(Stream* stream) const
 {
-    auto it = streamToGlobalIdx.find(stream);
+    std::map<Stream *, size_t>::const_iterator it = streamToGlobalIdx.find(stream);
     if(it != streamToGlobalIdx.end())
         return it->second;
     
