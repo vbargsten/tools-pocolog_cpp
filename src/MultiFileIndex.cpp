@@ -22,10 +22,13 @@ bool MultiFileIndex::createIndex(const std::vector< LogFile* >& logfiles)
     
     size_t globalStreamIdx = 0;
     
-    for(LogFile *curLogfile : logfiles)
+    
+    for(std::vector< LogFile* >::const_iterator it = logfiles.begin(); it != logfiles.end(); it++)
     {
-        for(Stream *stream : curLogfile->getStreams())
+        LogFile *curLogfile = *it;
+        for(std::vector< Stream* >::const_iterator it2 = curLogfile->getStreams().begin(); it2 != curLogfile->getStreams().end(); it2++)
         {
+            Stream *stream = *it2;
             globalSampleCount += stream->getSize();
             
             IndexEntry entry;
