@@ -13,6 +13,11 @@ MultiFileIndex::MultiFileIndex(const std::vector< std::string >& fileNames)
     createIndex(fileNames);
 }
 
+MultiFileIndex::MultiFileIndex()
+{
+
+}
+
 bool MultiFileIndex::createIndex(const std::vector< LogFile* >& logfiles)
 {
     //order all streams by time
@@ -29,6 +34,13 @@ bool MultiFileIndex::createIndex(const std::vector< LogFile* >& logfiles)
         for(std::vector< Stream* >::const_iterator it2 = curLogfile->getStreams().begin(); it2 != curLogfile->getStreams().end(); it2++)
         {
             Stream *stream = *it2;
+            
+            if(streamCheck)
+            {
+                if(!streamCheck(stream))
+                    continue;
+            }
+            
             globalSampleCount += stream->getSize();
             
             IndexEntry entry;
@@ -125,6 +137,10 @@ bool MultiFileIndex::createIndex(const std::vector< std::string >& fileNames)
     return createIndex(logFiles);
 }
 
+void MultiFileIndex::registerStreamCheck(boost::function<bool (Stream *stream)> test)
+{
+    streamCheck = test;
+}
    
     
 }

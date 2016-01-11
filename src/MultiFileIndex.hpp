@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include <stdexcept>
 #include <typelib/registry.hh>
+#include <boost/function.hpp>
 
 namespace pocolog_cpp
 {
@@ -32,6 +33,7 @@ class MultiFileIndex
 //     base::Time lastSampleTime;
 public:
     MultiFileIndex(const std::vector<std::string> &fileNames);
+    MultiFileIndex();
     
     const std::vector<Stream *> getAllStreams() const
     {
@@ -69,17 +71,22 @@ public:
         return index[globalSamplePos].sampleNrInStream;
     }
 
-    
+    /***
+     * Registers a callback, that evaluates every given stream if it
+     * should be included in the MultiIndex
+     * */
+    void registerStreamCheck(boost::function<bool (Stream *stream)> test);
     
     Typelib::Registry &getCombinedRegistry()
     {
         return combinedRegistry;
     };
 
-    
-private:
     bool createIndex(const std::vector<LogFile *> &logfiles);
     bool createIndex(const std::vector<std::string> &fileNames);
+    
+private:
+    boost::function<bool (Stream *stream)> streamCheck;
 };
 }
 #endif // MULTIFILEINDEX_H
