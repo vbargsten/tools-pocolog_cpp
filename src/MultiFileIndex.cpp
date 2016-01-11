@@ -68,8 +68,6 @@ bool MultiFileIndex::createIndex(const std::vector< LogFile* >& logfiles)
         if(!curEntry.stream->getSize())
             continue;
 
-        base::Time sampleTime = curEntry.stream->getFileIndex().getSampleTime(curEntry.sampleNrInStream);
-
         //add index sample
         index[globalSampleNr] = curEntry;
 
@@ -78,6 +76,9 @@ bool MultiFileIndex::createIndex(const std::vector< LogFile* >& logfiles)
         //check if we reached the end of the stream
         if(curEntry.sampleNrInStream < curEntry.stream->getSize())
         {
+            //get time of next sample
+            base::Time sampleTime = curEntry.stream->getFileIndex().getSampleTime(curEntry.sampleNrInStream);
+
             //reenter stream
             streamMap.insert(std::make_pair(sampleTime, curEntry));
         }        
