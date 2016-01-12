@@ -8,7 +8,7 @@
 namespace pocolog_cpp
 {
     
-Index::Index(std::string indexFileName, size_t streamIdx): curSampleNr(-1)
+Index::Index(std::string indexFileName, size_t streamIdx):  firstAdd(true), curSampleNr(-1)
 {
     indexFile.open(indexFileName.c_str(), std::ifstream::binary | std::ifstream::in);
     
@@ -26,6 +26,8 @@ Index::Index(const pocolog_cpp::StreamDescription& desc, off_t posOfStreamDesc) 
     prologue.nameCrc = 0;
     prologue.numSamples = 0;
     prologue.streamDescPos = posOfStreamDesc;
+    prologue.firstSampleTime = 0;
+    prologue.lastSampleTime = 0;
     name = desc.getName();
 }
 
@@ -41,6 +43,7 @@ void Index::addSample(off_t filePosition, const base::Time& sampleTime)
     if(firstAdd)
     {
         prologue.firstSampleTime = sampleTime.microseconds;
+        firstAdd = false;
     }
     
     IndexInfo info;
@@ -64,13 +67,6 @@ off_t Index::writeIndexToFile(std::fstream& indexFile, off_t prologPos, off_t in
         throw std::runtime_error("Error writing index file");
     
     prologue.dataPos = indexDataPos;
-    
-    if(prologue.numSamples)
-    {
-        prologue.firstSampleTime = buildBuffer[0].sampleTime;
-        prologue.lastSampleTime = buildBuffer[prologue.numSamples -1].sampleTime;
-    }
-    
 //     std::cout << "Found " << prologue.numSamples << " in stream " << name<< std::endl; 
     
     indexFile.write((char *) &prologue, sizeof(IndexPrologue));
@@ -95,7 +91,7 @@ off_t Index::writeIndexToFile(std::fstream& indexFile, off_t prologPos, off_t in
 void Index::loadIndex(size_t sampleNr)
 {
     if(sampleNr >= prologue.numSamples)
-        throw std::runtime_error("Error sample out of index requested");
+        throw std::runtime_error("Index::loadIndex : Error sample out of index requested");
         
     if(sampleNr != curSampleNr)
     {
