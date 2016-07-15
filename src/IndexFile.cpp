@@ -6,6 +6,7 @@
 #include <iostream>
 #include <cassert>
 #include <boost/lexical_cast.hpp>
+#include <stdexcept>
 
 namespace pocolog_cpp
 {

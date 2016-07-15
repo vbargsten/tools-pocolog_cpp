@@ -2,6 +2,7 @@
 #include <fstream>
 #include <vector>
 #include <iostream>
+#include <stdexcept>
 
 namespace pocolog_cpp
 {

@@ -1,5 +1,6 @@
 #include "Stream.hpp"
 #include <iostream>
+#include <stdexcept>
 
 pocolog_cpp::Stream::Stream(const pocolog_cpp::StreamDescription& desc, pocolog_cpp::Index& index) : desc(desc), index(index)
 {

@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <unistd.h>
 #include <iostream>
+#include <stdexcept>
 
 namespace pocolog_cpp
 {
