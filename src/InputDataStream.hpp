@@ -28,6 +28,8 @@ public:
     virtual ~InputDataStream();
 
     Typelib::Type const* getType() const;
+    
+    const std::string getCXXType() const;
      
     size_t getTypeMemorySize() const
     {
