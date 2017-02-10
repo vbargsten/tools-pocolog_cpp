@@ -8,6 +8,9 @@
 
 namespace pocolog_cpp
 {
+    
+class IndexFile;
+    
 class LogFile
 {
     std::vector<char > readBuffer;
@@ -17,6 +20,7 @@ class LogFile
     std::streampos curBlockHeaderPos;
     std::streampos curSampleHeaderPos;
     FileStream logFile;
+    std::vector<IndexFile *> indexFiles;
     
     std::vector<Stream *> streams;
     std::vector<StreamDescription> descriptions;
@@ -28,6 +32,7 @@ class LogFile
     
 public:
     LogFile(const std::string &fileName);
+    ~LogFile();
     
     std::string getFileName() const;
     std::string getFileBaseName() const;

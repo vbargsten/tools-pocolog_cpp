@@ -27,6 +27,7 @@ public:
     IndexFile(std::string indexFileName, pocolog_cpp::LogFile& logFile);
     
     IndexFile(LogFile& logFile);
+    ~IndexFile();
     
     bool loadIndexFile(std::string indexFileName, LogFile& logFile);
     bool createIndexFile(std::string indexFileName, LogFile& logFile);
