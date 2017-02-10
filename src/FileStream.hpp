@@ -44,6 +44,7 @@ public:
     
     FileStream(const char* __s,
            std::ios_base::openmode mode);
+    ~FileStream();
     
     bool open(const char* fileName, std::ios_base::openmode mode);
     

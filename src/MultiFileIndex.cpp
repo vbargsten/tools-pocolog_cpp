@@ -18,6 +18,13 @@ MultiFileIndex::MultiFileIndex()
 
 }
 
+MultiFileIndex::~MultiFileIndex()
+{
+    for(LogFile *file : logFiles)
+        delete file;
+}
+
+
 bool MultiFileIndex::createIndex(const std::vector< LogFile* >& logfiles)
 {
     //order all streams by time
@@ -141,6 +148,8 @@ void MultiFileIndex::registerStreamCheck(boost::function<bool (Stream *stream)> 
 {
     streamCheck = test;
 }
+
+
    
     
 }

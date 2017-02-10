@@ -34,6 +34,7 @@ class MultiFileIndex
 public:
     MultiFileIndex(const std::vector<std::string> &fileNames);
     MultiFileIndex();
+    ~MultiFileIndex();
     
     const std::vector<Stream *> getAllStreams() const
     {

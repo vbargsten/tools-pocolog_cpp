@@ -1,7 +1,7 @@
 #include "LogFile.hpp"
 #include "StreamDescription.hpp"
-#include "IndexFile.hpp"
 #include "InputDataStream.hpp"
+#include "IndexFile.hpp"
 #include <iostream>
          
 namespace pocolog_cpp
@@ -31,14 +31,15 @@ LogFile::LogFile(const std::string& fileName) : filename(fileName)
 //     std::cout << "Found " << descriptions.size() << " stream in logfile " << getFileName() << std::endl;
     
     //load Index
-    IndexFile indexFile(*this);
+    IndexFile *indexFile = new IndexFile(*this);
+    indexFiles.push_back(indexFile);
 
     //we need to start from the start, as Stream declarations may be any where
     //inside the logfile
     nextBlockHeaderPos = firstBlockHeaderPos;
     gotBlockHeader = false;
     
-    descriptions = indexFile.getStreamDescriptions();
+    descriptions = indexFile->getStreamDescriptions();
     
     for(std::vector<StreamDescription>::const_iterator it = descriptions.begin(); it != descriptions.end();it++)
     {
@@ -46,7 +47,7 @@ LogFile::LogFile(const std::string& fileName) : filename(fileName)
         {
             case DataStreamType:
 //                 std::cout << "Creating InputDataStream " << it->getName() << std::endl;
-                streams.push_back(new InputDataStream(*it, indexFile.getIndexForStream(*it)));
+                streams.push_back(new InputDataStream(*it, indexFile->getIndexForStream(*it)));
                 
                 break;
             default:
@@ -55,6 +56,16 @@ LogFile::LogFile(const std::string& fileName) : filename(fileName)
         }
     }
 }
+
+LogFile::~LogFile()
+{
+    for(Stream *s : streams)
+        delete s;
+    
+    for(IndexFile *index : indexFiles)
+        delete index;
+}
+
 
 const std::vector< Stream* >& LogFile::getStreams() const
 {

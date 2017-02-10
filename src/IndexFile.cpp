@@ -43,6 +43,14 @@ IndexFile::IndexFile(LogFile &logFile)
     }
 }
 
+IndexFile::~IndexFile()
+{
+    for(Index *index : indices)
+        delete index;
+    
+}
+
+
 bool IndexFile::loadIndexFile(std::string indexFileName, pocolog_cpp::LogFile& logFile)
 {
 //     std::cout << "Loading Index File " << std::endl;

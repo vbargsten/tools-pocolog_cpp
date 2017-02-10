@@ -20,6 +20,13 @@ pocolog_cpp::FileStream::FileStream(const char* __s, std::ios_base::openmode mod
     }
 }
 
+pocolog_cpp::FileStream::~FileStream()
+{
+    if(fd != -1)
+        close();
+}
+
+
 bool pocolog_cpp::FileStream::open(const char* fileName, std::ios_base::openmode mode)
 {
     fd = ::open(fileName, O_NONBLOCK);
