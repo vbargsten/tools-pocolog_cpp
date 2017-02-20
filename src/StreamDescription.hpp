@@ -5,6 +5,7 @@
 #include "Format.hpp"
 #include "FileStream.hpp"
 #include <vector>
+#include <map>
 
 namespace pocolog_cpp
 {
@@ -18,6 +19,7 @@ class StreamDescription
     std::string m_typeName;
     std::string m_typeDescription;
     std::string m_metadata;
+    std::map<std::string, std::string> m_metadataMap;
 
     
     std::string readString(const std::vector< uint8_t > data, size_t& pos);
@@ -61,6 +63,10 @@ public:
         return m_fileName;
     }
 
+    const std::map<std::string, std::string> &getMetadataMap() const
+    {
+        return m_metadataMap;
+    }
     
     
 };

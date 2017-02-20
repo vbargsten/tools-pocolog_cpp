@@ -26,21 +26,6 @@ InputDataStream::~InputDataStream()
 }
 
 
-const std::string InputDataStream::getCXXType() const
-{
-    std::string metadata = desc.getMetadata();
-    if(metadata.find("rock_cxx_type_name") == std::string::npos)
-    {
-        throw std::runtime_error("couldn't find log metadata! original type extraction from metadata only works with new logfiles");
-    }
-    
-    std::string rock_cxx_type_name = metadata.substr(metadata.find(":") + 1, metadata.length());
-    rock_cxx_type_name = rock_cxx_type_name.substr(0, rock_cxx_type_name.find('\n'));
-    rock_cxx_type_name.erase(std::remove(rock_cxx_type_name.begin(), rock_cxx_type_name.end(), ' '), rock_cxx_type_name.end());
-    return rock_cxx_type_name;
-}
-
-
 void InputDataStream::loadTypeLib()
 {
     utilmm::config_set empty;
@@ -76,5 +61,15 @@ Typelib::Value InputDataStream::getTyplibValue(void *memoryOfType, size_t memory
     Typelib::load(v, buffer);
     return v;
 }
+
+const std::string InputDataStream::getCXXType() const
+{
+    std::map<std::string, std::string>::const_iterator it = desc.getMetadataMap().find("rock_cxx_type_name");
+    if(it == desc.getMetadataMap().end())
+        throw std::runtime_error("Error: Logfile does not contain metadata CXXType. Maybe old logfile?");
+        
+    return it->second;
+}
+
 
 }

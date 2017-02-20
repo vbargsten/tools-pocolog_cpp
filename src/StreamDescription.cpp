@@ -3,6 +3,8 @@
 #include <vector>
 #include <iostream>
 #include <stdexcept>
+#include <sstream>
+
 
 namespace pocolog_cpp
 {
@@ -75,7 +77,13 @@ StreamDescription::StreamDescription(const std::string& fileName, const std::vec
         default:
             throw std::runtime_error("StreamDescription: Error, unexpected Stream description");
             break;
-    };    
+    };  
+    
+    std::string key, val;
+    std::istringstream inputData(m_metadata);
+
+    while(std::getline(std::getline(inputData, key, ':') >> std::ws, val))
+        m_metadataMap[key] = val;
 }
 
 StreamDescription::~StreamDescription()
