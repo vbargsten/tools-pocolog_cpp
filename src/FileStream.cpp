@@ -7,7 +7,7 @@
 #include <stdexcept>
 #include <unistd.h>
 
-pocolog_cpp::FileStream::FileStream() : fd(-1)
+pocolog_cpp::FileStream::FileStream() : fd(-1), goodFlag(false)
 {
 
 }
