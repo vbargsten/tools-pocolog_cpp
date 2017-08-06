@@ -45,9 +45,11 @@ IndexFile::IndexFile(LogFile &logFile)
 
 IndexFile::~IndexFile()
 {
-    for(Index *index : indices)
-        delete index;
-    
+    for (size_t i = 0; i < indices.size(); i++) {
+        delete indices[i];
+        indices[i] = NULL;
+    }
+    indices.clear();
 }
 
 

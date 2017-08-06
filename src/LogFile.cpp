@@ -59,11 +59,17 @@ LogFile::LogFile(const std::string& fileName) : filename(fileName)
 
 LogFile::~LogFile()
 {
-    for(Stream *s : streams)
-        delete s;
-    
-    for(IndexFile *index : indexFiles)
-        delete index;
+    for (size_t i = 0; i < streams.size(); i++) {
+        delete streams[i];
+        streams[i] = NULL;
+    }
+    streams.clear();
+
+    for (size_t i = 0; i < indexFiles.size(); i++) {
+        delete indexFiles[i];
+        streams[i] = NULL;
+    }
+    indexFiles.clear();
 }
 
 
