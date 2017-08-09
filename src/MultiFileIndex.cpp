@@ -116,12 +116,10 @@ bool MultiFileIndex::createIndex(const std::vector< LogFile* >& logfiles)
     if(verbose)
     {
         std::cout << "\r 100% Done";
-        std::cout << std::endl;
-
         std::cout << "Processed " << globalSampleNr << " of " << globalSampleCount << " samples " << std::endl;
     }
     
-    
+    std::cout << std::endl;
     
     return true;
 
