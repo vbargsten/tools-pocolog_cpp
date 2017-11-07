@@ -64,6 +64,11 @@ public:
         return index.getNumSamples();
     }
     
+    const FileStream& getFileStream() const
+    {
+        return fileStream;
+    }
+    
     bool getSampleData(std::vector<uint8_t> &result, size_t sampleNr);
     
     template<typename T>
