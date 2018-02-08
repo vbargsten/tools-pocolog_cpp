@@ -33,6 +33,11 @@ public:
     {
         return desc.getName();
     }
+
+    std::string getTypeName() const
+    {
+        return desc.getTypeName();
+    }
     
     StreamType getStreamType() const    
     { 
