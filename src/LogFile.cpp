@@ -47,7 +47,14 @@ LogFile::LogFile(const std::string& fileName, bool verbose) : filename(fileName)
         {
             case DataStreamType:
 //                 std::cout << "Creating InputDataStream " << it->getName() << std::endl;
-                streams.push_back(new InputDataStream(*it, indexFile->getIndexForStream(*it)));
+                    try
+                    {
+                        streams.push_back(new InputDataStream(*it, indexFile->getIndexForStream(*it)));
+                    }
+                    catch(...)
+                    {
+                        std::cerr << "WARNING, skipping corrupted stream " << it->getName() << " of type " << it->getTypeName() << std::endl;
+                    }
                 
                 break;
             default:
