@@ -7,7 +7,7 @@
 namespace pocolog_cpp
 {
 
-LogFile::LogFile(const std::string& fileName) : filename(fileName)
+LogFile::LogFile(const std::string& fileName, bool verbose) : filename(fileName)
 {
 
     logFile.open(fileName.c_str(), std::ifstream::binary | std::ifstream::in);
@@ -31,7 +31,7 @@ LogFile::LogFile(const std::string& fileName) : filename(fileName)
 //     std::cout << "Found " << descriptions.size() << " stream in logfile " << getFileName() << std::endl;
     
     //load Index
-    IndexFile *indexFile = new IndexFile(*this);
+    IndexFile *indexFile = new IndexFile(*this, verbose);
     indexFiles.push_back(indexFile);
 
     //we need to start from the start, as Stream declarations may be any where
@@ -47,7 +47,14 @@ LogFile::LogFile(const std::string& fileName) : filename(fileName)
         {
             case DataStreamType:
 //                 std::cout << "Creating InputDataStream " << it->getName() << std::endl;
-                streams.push_back(new InputDataStream(*it, indexFile->getIndexForStream(*it)));
+                    try
+                    {
+                        streams.push_back(new InputDataStream(*it, indexFile->getIndexForStream(*it)));
+                    }
+                    catch(...)
+                    {
+                        std::cerr << "WARNING, skipping corrupted stream " << it->getName() << " of type " << it->getTypeName() << std::endl;
+                    }
                 
                 break;
             default:

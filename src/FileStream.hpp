@@ -38,6 +38,7 @@ private:
     
     bool reloadBuffer(off_t position);
     bool goodFlag;
+    std::string fileName;
     
 public:
     FileStream();
@@ -60,6 +61,11 @@ public:
     bool eof() const
     {
         return readPos >= fileSize;
+    }
+    
+    const std::string getFileName() const
+    {
+        return fileName;
     }
 
     bool fail() const;

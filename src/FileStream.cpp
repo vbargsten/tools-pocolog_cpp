@@ -7,7 +7,7 @@
 #include <stdexcept>
 #include <unistd.h>
 
-pocolog_cpp::FileStream::FileStream() : fd(-1)
+pocolog_cpp::FileStream::FileStream() : fd(-1), goodFlag(false), fileName("")
 {
 
 }
@@ -53,6 +53,7 @@ bool pocolog_cpp::FileStream::open(const char* fileName, std::ios_base::openmode
     readBuffer.resize(blockSize);
     readPos = 0;
     writePos = 0;
+    this->fileName = fileName;
     
 //     std::cout << "File opened " << (fd > 0) << " file size " << fileSize  << " blk size " << blockSize << std::endl;
     

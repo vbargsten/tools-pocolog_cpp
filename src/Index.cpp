@@ -9,10 +9,8 @@
 namespace pocolog_cpp
 {
     
-Index::Index(std::string indexFileName, size_t streamIdx):  firstAdd(true), curSampleNr(-1)
+Index::Index(std::string indexFileName, size_t streamIdx):  firstAdd(true), curSampleNr(-1), indexFile(indexFileName.c_str(), std::ifstream::binary | std::ifstream::in)
 {
-    indexFile.open(indexFileName.c_str(), std::ifstream::binary | std::ifstream::in);
-    
     indexFile.seekg(streamIdx * sizeof(IndexPrologue) + sizeof(IndexFile::IndexFileHeader));
     
     indexFile.read((char *) & prologue, sizeof(IndexPrologue));
